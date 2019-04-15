@@ -68,22 +68,23 @@ func (controller *PersonController) UpdatePerson() {
 	addressCity := controller.Ctx.Request.Form.Get("address-city")
 	addressState := controller.Ctx.Request.Form.Get("address-state")
 
-	var person Person
-
-	for _, value := range people {
+	for i, value := range people {
 		if value.ID == id {
-			person = value
-			value.Firstname = firstname
-			value.Lastname = lastname
-			value.Address = &Address{
+			people[i].Firstname = firstname
+			people[i].Lastname = lastname
+			people[i].Address = &Address{
 				City:  addressCity,
 				State: addressState,
 			}
+			break
 		}
 	}
 
-	controller.Data["json"] = person
-	controller.ServeJSON()
+	//for _, value := range people {
+	//	fmt.Println(value)
+	//}
+
+	controller.GetPeople()
 }
 
 func (controller *PersonController) DeletePerson() {
@@ -107,7 +108,7 @@ func main() {
 	beego.Router("/people", &PersonController{}, "post:CreatePerson")
 	beego.Router("/people", &PersonController{}, "get:GetPeople")
 	beego.Router("/people/:id:int", &PersonController{}, "get:GetPerson")
-	beego.Router("/people/:id:int", &PersonController{}, "update:UpdatePerson")
+	beego.Router("/people/:id:int", &PersonController{}, "put:UpdatePerson")
 	beego.Router("/people/:id:int", &PersonController{}, "delete:DeletePerson")
 	beego.Run()
 }
